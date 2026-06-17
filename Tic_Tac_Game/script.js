@@ -1,7 +1,7 @@
 let button = document.querySelector("#restart");
 button.addEventListener("click", restartGame);
 
-let currentGamerView = document.querySelector("#current-gamer");
+let currentGamerView = document.querySelector("#current_gamer");
 let winnerTitle = document.querySelector("#winner");
 let cells = getFieldCells("#field td");
 let countX = document.querySelector("#countX");
@@ -17,7 +17,6 @@ function getFieldCells(selector) {
   return document.querySelectorAll(selector);
 }
 
-//allow global
 function prepareField() {
   for (let i = 0; i < cells.length; i++) {
     cells[i].innerHTML = "";
@@ -28,9 +27,19 @@ function prepareField() {
   countO.innerHTML = counterO;
   showCurrentGamer(currentGamer, currentGamerView);
 }
-
+function checkDraw(cells) {
+  for (let i = 0; i < cells.length; i++) {
+    if (cells[i].innerHTML === "") {
+      return false;
+    }
+  }
+  return true;
+}
+function showDraw(winnerTitle) {
+  winnerTitle.innerHTML = "Draw!";
+}
 function nextStep() {
-  var cell = this;
+  let cell = this;
   fillCell(cell, currentGamer);
   currentGamer = changeGamer(currentGamer);
 
@@ -41,11 +50,15 @@ function nextStep() {
   let winner = checkWin(cells);
   if (winner !== false) {
     endGame(cells, winner, winnerTitle, currentGamerView);
+  } else if (checkDraw(cells)) {
+    stopGame(cells);
+    showDraw(winnerTitle);
+    cleanCurrentGamer(currentGamerView);
   }
 }
 
 function changeGamer(currentGamer) {
-  if (currentGamer == "X") {
+  if (currentGamer === "X") {
     return "O";
   } else {
     return "X";
@@ -89,11 +102,13 @@ function cleanCurrentGamer(elem) {
   elem.innerHTML = "Game over!!!";
 }
 function counter(name) {
-  if (name == "X") {
+  if (name === "X") {
     counterX++;
-  } else if (name == "O") {
+  } else if (name === "O") {
     counterO++;
   }
+  countX.innerHTML = counterX;
+  countO.innerHTML = counterO;
 }
 
 function checkWin(cells) {
@@ -111,9 +126,9 @@ function checkWin(cells) {
     let combination = combinations[i];
 
     if (
-      cells[combination[0]].innerHTML == cells[combination[1]].innerHTML &&
-      cells[combination[1]].innerHTML == cells[combination[2]].innerHTML &&
-      cells[combination[0]].innerHTML != ""
+      cells[combination[0]].innerHTML === cells[combination[1]].innerHTML &&
+      cells[combination[1]].innerHTML === cells[combination[2]].innerHTML &&
+      cells[combination[0]].innerHTML !== ""
     ) {
       return cells[combination[0]].innerHTML;
     }
@@ -121,3 +136,5 @@ function checkWin(cells) {
 
   return false;
 }
+
+/*function endDrawGame() {}*/
